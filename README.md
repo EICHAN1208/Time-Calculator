@@ -8,4 +8,10 @@ $ bin/calculation h 2h + 30m # => 2.5h
 $ bin/calculation m 2h + 30m # => 150.0m
 
 $ bin/calculation s 2h + 30m # => 9000.0s
+
+$ bin/calculation h 2h - 30m # => 1.5h
+
+$ bin/calculation m 2h - 30m # => 90.0m
+
+$ bin/calculation s 2h - 30m # => 5400.0s
 ```
