@@ -6,12 +6,11 @@ module TimeCalculation
   class << self
     def listen(argv)
       unit, ele1, op, ele2 = argv
-      val1, unit1 = ele1.split(/([y | d | h | m | s])/)
-      val2, unit2 = ele2.split(/([y | d | h | m | s])/)
-      time1 = Timee.new(value: val1, unit: unit1)
-      time2 = Timee.new(value: val2, unit: unit2)
-      result = time1 + time2
-      result.class.new(value: result.convert_value(unit), unit: unit)
+      Timee.calculate(
+        items: [ele1, ele2],
+        unit: unit,
+        operator: op
+      )
     end
   end
 end
@@ -22,6 +21,23 @@ class Timee
   def initialize(value:, unit:)
     @value = value.to_f
     @unit = unit
+  end
+
+  class << self
+    def calculate(items:, unit:, operator:)
+      time1, time2 = Timee.build_all(items[0], items[1])
+      result = time1.send(operator, time2)
+      new(value: result.convert_value(unit), unit: unit)
+    end
+
+    def build_all(element1, element2)
+      [element1, element2].map { |e| new(attributes(e)) }
+    end
+
+    def attributes(element)
+      value, unit = element.split(/([y | d | h | m | s])/)
+      { value: value, unit: unit }
+    end
   end
 
   def inspect
@@ -39,6 +55,11 @@ class Timee
 
   def +(other)
     new_value = @value + other.convert(@unit).value
+    self.class.new(value: new_value, unit: @unit)
+  end
+
+  def -(other)
+    new_value = @value - other.convert(@unit).value
     self.class.new(value: new_value, unit: @unit)
   end
 end
